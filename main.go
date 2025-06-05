@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -25,9 +26,33 @@ func getAlbums(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, albums)
 }
 
+func postAlbum(c *gin.Context) {
+	var newAlbum album
+	if err := c.BindJSON(&newAlbum); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Json binding error"})
+		return
+	}
+
+	albums = append(albums, newAlbum)
+	c.IndentedJSON(http.StatusCreated, newAlbum)
+}
+
+func getAlbumByID(c *gin.Context) {
+	id := c.Param("id")
+	for _, alb := range albums {
+		if alb.ID == id {
+			c.IndentedJSON(http.StatusOK, alb)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("album with id=%s is not found.", id)})
+}
+
 func main() {
 	router := gin.Default()
 	router.GET("/albums", getAlbums)
+	router.POST("/albums", postAlbum)
+	router.GET("/albums/:id", getAlbumByID)
 
 	if err := router.Run("localhost:3000"); err != nil {
 		log.Fatal(err)
