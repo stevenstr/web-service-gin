@@ -111,3 +111,128 @@ var albums = []album{
 }
 ```
 Next, you'll write code to implement your first endpoint.
+
+# Step 3
+## Step 3 of 7
+Write a handler to return all items
+When the client makes a request at GET /albums, you want to return all the albums as JSON.
+
+To do this, you'll write the following:
+- Logic to prepare a response
+- Code to map the request path to your logic
+Note that this is the reverse of how they'll be executed at runtime, but you're adding dependencies first, then the code that depends on them.
+
+### Write the code
+As you follow these steps, ignore the errors visible in the editor. You'll fix these in Run the code, below.
+
+1. Beneath the struct code you added in the preceding section, paste the following code to get the album list.
+
+This getAlbums function creates JSON from the slice of album structs, writing the JSON into the response.
+```Go
+// getAlbums responds with the list of all albums as JSON.
+func getAlbums(c *gin.Context) {
+        c.IndentedJSON(http.StatusOK, albums)
+}
+```
+In this code, you:
+
+- Write a getAlbums function that takes a gin.Context parameter. Note that you could have given this function any name – neither Gin nor Go require a particular function name format.
+
+gin.Context is the most important part of Gin. It carries request details, validates and serializes JSON, and more. (Despite the similar name, this is different from Go's built-in context package.)
+
+- Call Context.IndentedJSON to serialize the struct into JSON and add it to the response.
+
+The function's first argument is the HTTP status code you want to send to the client. Here, you're passing the StatusOK constant from the net/http package to indicate 200 OK.
+
+Note that you can replace Context.IndentedJSON with a call to Context.JSON to send more compact JSON. In practice, the indented form is much easier to work with when debugging and the size difference is usually small.
+
+2. Near the top of main.go, just beneath the albums slice declaration, paste the code below to assign the handler function to an endpoint path.
+
+This sets up an association in which getAlbums handles requests to the /albums endpoint path.
+```Go
+func main() {
+        router := gin.Default()
+        router.GET("/albums", getAlbums)
+
+        router.Run("localhost:8080")
+}
+```
+In this code, you:
+
+- Initialize a Gin router using Default.
+
+- Use the GET function to associate the GET HTTP method and /albums path with a handler function.
+
+Note that you're passing the name of the getAlbums function. This is different from passing the result of the function, which you would do by passing getAlbums() (note the parenthesis).
+
+- Use the Run function to attach the router to an http.Server and start the server.
+
+3. Near the top of main.go, just beneath the package declaration, import the packages you'll need to support the code you've just written.
+
+The first lines of code should look like this:
+```Go
+package main
+
+import (
+        "net/http"
+
+        "github.com/gin-gonic/gin"
+)
+```
+4. Save main.go.
+
+### Run the code
+1. Begin tracking the Gin module as a dependency.
+
+At the command line, use go get to add the github.com/gin-gonic/gin module as a dependency for your module. Use a dot argument to mean "get dependencies for code in the current directory."
+
+```sh
+go get .
+go get: added \
+    github.com/gin-gonic/gin v1.7.2
+```
+Go resolved and downloaded this dependency to satisfy the import declaration you added in the previous step.
+
+2. In the Cloud Shell terminal window, run the code.
+
+Use a dot argument to mean "run the package in the current directory."
+```sh
+go run .
+```
+Once the code is running, you have a running HTTP server to which you can send requests.
+
+3. Open a new terminal window in which to make requests to the running web service.
+
+Click the New Terminal menu command to open a new Cloud Shell terminal.
+
+4. In the second Cloud Shell terminal window, use curl to make a request to your running web service.
+```sh
+curl http://localhost:8080/albums
+```
+The command should display the data you seeded the service with.
+```sh
+[
+        {
+                "id": "1",
+                "title": "Blue Train",
+                "artist": "John Coltrane",
+                "price": 56.99
+        },
+        {
+                "id": "2",
+                "title": "Jeru",
+                "artist": "Gerry Mulligan",
+                "price": 17.99
+        },
+        {
+                "id": "3",
+                "title": "Sarah Vaughan and Clifford Brown",
+                "artist": "Sarah Vaughan",
+                "price": 39.99
+        }
+]
+```
+You've started an API! In the next section, you'll create another endpoint with code to handle a POST request to add an item.   
+
+
+# Step 4
