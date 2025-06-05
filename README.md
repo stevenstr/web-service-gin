@@ -298,11 +298,7 @@ go run .
 ```
 3. In the other Cloud Shell terminal window, use the following curl command to make a request to your running web service.
 ```sh
-curl http://localhost:8080/albums \
-    --include --header \
-    "Content-Type: application/json" \
-    --request "POST" --data \
-    '{"id": "4","title": "The Modern Sound of Betty Carter","artist": "Betty Carter","price": 49.99}"
+curl http://localhost:8080/albums --include --header    "Content-Type: application/json" --request "POST" --data '{"id": "4","title": "The Modern Sound of Betty Carter","artist": "Betty Carter","price": 49.99}'
 ```
 The command should display headers and JSON for the added album.
 ```sh
@@ -320,10 +316,7 @@ Content-Length: 116
 ```
 4. As in the previous section, use curl to retrieve the full list of albums, which you can use to confirm that the new album was added.
 ```sh
-curl http://localhost:8080/albums \
-    --header \
-    "Content-Type: application/json" \
-    --request "GET"
+curl http://localhost:3000/albums --header "Content-Type: application/json" --request "GET"
 ```
 The command should display the album list.
 ```json
